@@ -1,0 +1,47 @@
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+    
+	Dans le cadre de nos cours de programmation en langage C, et de leurs application en Travaux Dirigés sur Arduino\footnotemark, nous avons du réaliser un MasterMind.
+
+\begin{wrapfigure}{l}{60mm}
+	\centering
+    \includegraphics[height=60mm]{Mastermind.jpg}
+    \captionof{figure}{Mastermind}
+    \label{fig1}
+\end{wrapfigure}
+   	
+    \paragraph{}
+    Pour ceux qui ne connaissent pas, le MasterMind est un jeu de réflexion et de déduction qui se joue à deux. 
+    Nous le trouvons généralement sous la forme de la figure\ref{fig1}.
+\paragraph{}
+    En voici donc le principe d'après \href{https://fr.wikipedia.org/wiki/Mastermind}{Wikipedia}:
+	Un joueur commence par placer son choix de pions sans qu'ils soient vus de l'autre joueur à l'arrière d'un cache qui les masquera à la vue de celui-ci jusqu'à la fin de la manche.
+	Le joueur qui n'a pas sélectionné les pions doit trouver quels sont les quatre pions, c'est-à-dire leurs couleurs et positions.
+
+	Pour cela, à chaque tour, le joueur doit se servir de pions pour remplir une rangée selon l'idée qu'il se fait des pions dissimulés.
+	Une fois les pions placés, l'autre joueur indique :
+	\begin{enumerate}
+		\item le nombre de pions de la bonne couleur bien placés en utilisant le même nombre de pions rouges.
+		\item le nombre de pions de la bonne couleur, mais mal placés, avec les pions blancs.
+	\end{enumerate}
+
+
+\paragraph{}
+	Il arrive donc surtout en début de partie qu'il ne fasse rien concrètement et qu'il n'ait à dire qu'aucun pion ne correspond, en couleur ou en couleur et position.
+	La tactique du joueur actif consiste à sélectionner en fonction des coups précédents, couleurs et positions, de manière à obtenir le maximum d'informations de la réponse du partenaire puisque le nombre de propositions est limité par le nombre de rangées de trous du jeu. 
+    
+	Dans la plupart des cas, il s'efforce de se rapprocher le plus possible de la solution, compte tenu des réponses précédentes, mais il peut aussi former une combinaison dans le seul but de vérifier une partie des conclusions des coups précédents et de faire en conséquence la proposition la plus propice à la déduction d'une nouvelle information.
+
+	Le joueur gagne cette manche s'il donne la bonne combinaison de pions sur la dernière rangée ou avant. Dans tous les cas, c'est à son tour de choisir les pions à découvrir. 
+Mais il est interdit de mettre une couleur en double, en triple ou en quadruple aussi bien dans les pions secrets que dans les pions \og publics \fg.
+
+\paragraph{}
+Les objectifs de ce projet sont:
+\begin{itemize}
+	\item de développer des algorithmes.
+    \item d'appliquer les connaissances théoriques acquises en cours de programmation de langage C.
+    \item de travailler sur les entrées/sorties de la carte Arduino.
+    \item de réaliser un montage électronique fonctionnel.
+\end{itemize}
+
+\footnotetext[1]{Arduino is an open-source electronics platform based on easy-to-use hardware and software. It's intended for anyone making interactive projects. \emph{\url{https://www.arduino.cc/}}}

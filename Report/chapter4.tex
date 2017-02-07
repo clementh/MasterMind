@@ -1,0 +1,39 @@
+\chapter{Calcul du résultat}
+\paragraph{}
+	Il faut maintenant réaliser une fonction de calcul du résultat.
+Cette fonction devra a partir du code secret et de la réponse entrée par le joueur nous indiquer le nombre de lettres bien placées et le nombre de lettres mal placée.
+
+\section{Algorithme}
+\paragraph{}
+	Pour cet algorithme il a fallut prendre en compte un point important : la possibilité d'avoir plusieurs fois la même lettre dans le code ou la réponse.
+Un algorithme ne prenant pas cette information en compte pourrais entraîner des erreur.  
+
+Prenons un exemple : 
+  \begin{itemize}
+    \item Code secret : "ABBA"
+    \item Réponse : "ABCD"
+  \end{itemize}
+Dans ce cas un algorithme ne prenants pas en compte les double lettre pourrais considérer le A de la réponse comme étant a la fois a la bonne place mais aussi comme étant mal placé car "ABBA" contient deux 'A'.
+Pour éviter cela nous avons du mettre en place un moyen de mémoriser les élément déjà identifier comme bien ou mal placés afin d'éviter le problème de double résultats.
+
+	Nous avons donc décider de directement modifier les tableaux contenant le code secret et la réponse.\\
+    
+    Lorsque nous identifions deux lettres comme etant identique :
+    \begin{itemize}
+    \item La lettre du tableau code secret est passées en minuscules afin d'empecher une autre égalité lors de la comparaison sans perdre de donnée car il nous suffira simplement de repasser les lettres en majuscules pour revenir a l'etat initial
+    \item La lettre du tableau reponse est mise a 1 ou 2 selon qu'elle soit bien placé ou non. La perte de donnée n'etant pas importante car nous ne reutilisons pas ces données par la suite. 
+    \end{itemize}
+
+\paragraph{}
+Une fois cela pris en compte l'algorithme est assez simple et se deroule en trois étapes :
+\begin{enumerate}
+\item identification des lettres bien placées 
+\item identification des lettres mal placées
+\item mise en majuscule des lettres ayant été mise en minuscule
+\end{enumerate}
+ 
+ 
+\newpage
+\section{Programme}
+\underline{Programme utilisé pour calculer les résultats:}
+\lstinputlisting[language=c]{Sources/GetAnswer.c}
