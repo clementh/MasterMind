@@ -25,6 +25,12 @@ void ResetPlayerAnswer(char *playerAnswer){
     }
 }
 
+void ResetAnswer(char *Answer){
+      for(int i = 0; i<4; i++){
+      Answer[i] = '\0';
+    }
+}
+
 
 void ScrollText(char *text){
   int len = strlen(text);
@@ -63,7 +69,7 @@ void DisplayBegin(){
   lcd.setCursor(3,0);
   lcd.print("MasterMind");
   lcd.setCursor(6, 1);
-  lcd.print("v1.0");
+  lcd.print("v1.1");
   delay(2000);
   lcd.clear();
 }
@@ -90,14 +96,41 @@ void DisplayEnd(int win, char *secretAnswer){
   delay(4000);
 }
 
-
-void RandomAnswer(char *secretAnswer){
-  for (int i = 0; i < 4; i++){
-     secretAnswer[i] = (rand()%6)+65;
-  }
-  secretAnswer[4]='\0';
-
+int CheckTwins(char *secretAnswer, char tmp){
+  for (int i =0; i<4; i++)
+    if(tmp == secretAnswer[i])
+      return 0;
+  return 1;
 }
+
+
+int MenuDisplay(void){
+  char *levels[5]={"BEGINNER","NORMAL","TEACHER","HARD","42"};
+  
+  int input = 0;
+  lcd.clear();
+  lcd.home();
+  lcd.write("SELECT LEVEL :");
+  lcd.setCursor(0,1);
+  lcd.print(levels[input]);
+
+  for(;;){
+    if(GetButtons()==1){
+      lcd.clear();
+      lcd.home();
+      lcd.write("SELECT LEVEL :");
+      lcd.setCursor(0,1);
+
+      input = (input+=1)%5;
+      lcd.print(levels[input]);
+    }
+    if(GetButtons()==2){
+      return input;
+    }
+    delay(200);
+  }
+}
+
 
 
 int GetButtons(){
@@ -110,33 +143,6 @@ int GetButtons(){
     
   else 
     return 0;
-}
-
-
-
-void InputLetters (char *playerAnswer, int *dx, int *dy){
-  int input = 0;
-  int letter = 0;
-  ResetPlayerAnswer(playerAnswer);
-  
-  for(;letter <= 3;){
-    lcd.setCursor(*dx,*dy);
-    //lcd.blink();
-    //lcd.cursor();
-    lcd.write(input+65);
-    
-    if(GetButtons()==1){    
-      input = (input+=1)%6;
-    }
-    if(GetButtons()==2){
-      playerAnswer[letter] = input + 65;
-      input = 0;
-      letter ++;
-      *dx +=1;
-    }
-    delay(200);
-  }
-
 }
 
 
@@ -168,7 +174,6 @@ void Printer(int *results, int *dx, int *dy, int nbTry) {
   delay(600);
   
 }
-
 
 
 int *GetResults(char *secretAnswer, char *playerAnswer){
@@ -209,15 +214,249 @@ int *GetResults(char *secretAnswer, char *playerAnswer){
             secretAnswer[i] = secretAnswer[i] -= 32;
         }    
     }
-    return result;  
+  return result;  
 }
 
 
+//##################################################LEVELS functions ##################################################
+
+
+void RandomAnswer_0(char *secretAnswer){
+  char tmp;
+  ResetAnswer(secretAnswer);
+  
+  for (int i = 0; i < 4;){
+    tmp = (rand()%5)+65;
+    
+    if(CheckTwins(secretAnswer, tmp) ==1){
+      secretAnswer[i] = tmp;
+      i++;
+    }
+  }
+  secretAnswer[4]='\0';
+}
+
+
+void RandomAnswer_1(char *secretAnswer){
+  char tmp;
+  ResetAnswer(secretAnswer);
+  
+  for (int i = 0; i < 4;){
+    tmp = (rand()%6)+65;
+    
+    if(CheckTwins(secretAnswer, tmp) ==1){
+      secretAnswer[i] = tmp;
+      i++;
+    }
+  }
+  secretAnswer[4]='\0';
+}
+
+
+void RandomAnswer(char *secretAnswer){
+  ResetPlayerAnswer(secretAnswer);
+
+  
+  for (int i = 0; i < 4; i++){
+     secretAnswer[i] = (rand()%6)+65;
+  }
+  secretAnswer[4]='\0';
+}
+
+
+void RandomAnswer_3(char *secretAnswer){
+  ResetPlayerAnswer(secretAnswer);
+
+  
+  for (int i = 0; i < 4; i++){
+     secretAnswer[i] = (rand()%7)+65;
+  }
+  secretAnswer[4]='\0';
+
+}
+
+void RandomAnswer_4(char *secretAnswer){
+  ResetPlayerAnswer(secretAnswer);
+
+  
+  for (int i = 0; i < 4; i++){
+     secretAnswer[i] = (rand()%26)+65;
+  }
+  secretAnswer[4]='\0';
+
+}
+
+
+void InputLetters_0(char *playerAnswer, int *dx, int *dy){
+  int input = 0;
+  int letter = 0;
+  ResetAnswer(playerAnswer);
+  
+  for(;letter < 4;){
+    lcd.setCursor(*dx,*dy);
+    lcd.write(input+65);
+    
+    if(GetButtons()==1){ 
+      do
+      {
+        input = (input+=1)%5;
+        
+      }while(CheckTwins(playerAnswer,(input)%5+65)!=1);  
+    }
+    if(GetButtons()==2){
+      playerAnswer[letter] = input + 65;
+      for(input = 0;CheckTwins(playerAnswer,input+65)!=1;input ++){}
+      
+      letter ++;
+      *dx +=1;
+    }
+    delay(200);
+  }
+}
+
+
+void InputLetters_1(char *playerAnswer, int *dx, int *dy){
+  int input = 0;
+  int letter = 0;
+  ResetAnswer(playerAnswer);
+  
+  for(;letter < 4;){
+    lcd.setCursor(*dx,*dy);
+    lcd.write(input+65);
+    
+    if(GetButtons()==1){ 
+      do
+      {
+        input = (input+=1)%6;
+        
+      }while(CheckTwins(playerAnswer,(input)%5+65)!=1);  
+    }
+    if(GetButtons()==2){
+      playerAnswer[letter] = input + 65;
+      for(input = 0;CheckTwins(playerAnswer,input+65)!=1;input ++){}
+      
+      letter ++;
+      *dx +=1;
+    }
+    delay(200);
+  }
+}
+
+
+
+void InputLetters(char *playerAnswer, int *dx, int *dy){
+  int input = 0;
+  int letter = 0;
+  ResetPlayerAnswer(playerAnswer);
+  
+  for(;letter <= 3;){
+    lcd.setCursor(*dx,*dy);
+    lcd.write(input+65);
+    
+    if(GetButtons()==1){    
+      input = (input+=1)%6;
+    }
+    if(GetButtons()==2){
+      playerAnswer[letter] = input + 65;
+      input = 0;
+      letter ++;
+      *dx +=1;
+    }
+    delay(200);
+  }
+
+}
+
+
+void InputLetters_3(char *playerAnswer, int *dx, int *dy){
+  int input = 0;
+  int letter = 0;
+  ResetPlayerAnswer(playerAnswer);
+  
+  for(;letter <= 3;){
+    lcd.setCursor(*dx,*dy);
+    lcd.write(input+65);
+    
+    if(GetButtons()==1){    
+      input = (input+=1)%7;
+    }
+    if(GetButtons()==2){
+      playerAnswer[letter] = input + 65;
+      input = 0;
+      letter ++;
+      *dx +=1;
+    }
+    delay(200);
+  }
+
+}
+
+
+void InputLetters_4(char *playerAnswer, int *dx, int *dy){
+  int input = 0;
+  int letter = 0;
+  ResetPlayerAnswer(playerAnswer);
+  
+  for(;letter <= 3;){
+    lcd.setCursor(*dx,*dy);
+    lcd.write(input+65);
+    
+    if(GetButtons()==1){    
+      input = (input+=1)%26;
+    }
+    if(GetButtons()==2){
+      playerAnswer[letter] = input + 65;
+      input = 0;
+      letter ++;
+      *dx +=1;
+    }
+    delay(200);
+  }
+
+}
+
+int GameLoop_0(char *secretAnswer, char *playerAnswer, int dx, int dy){
+  int nbTry;
+  int *result;
+  
+  RandomAnswer_0(secretAnswer);
+
+  for(nbTry = 0; nbTry<6; nbTry++){
+    InputLetters_0(playerAnswer, &dx, &dy);
+    result = GetResults(secretAnswer, playerAnswer);
+    Printer(result, &dx,&dy, nbTry);
+    
+    if(result[0] == 4)
+      return 0;
+  }
+  return 1;
+}
+
+
+int GameLoop_1(char *secretAnswer, char *playerAnswer, int dx, int dy){
+  int nbTry;
+  int *result;
+  
+  RandomAnswer_1(secretAnswer);
+
+  for(nbTry = 0; nbTry<6; nbTry++){
+    InputLetters_1(playerAnswer, &dx, &dy);
+    result = GetResults(secretAnswer, playerAnswer);
+    Printer(result, &dx,&dy, nbTry);
+    
+    if(result[0] == 4)
+      return 0;
+  }
+  return 1;
+}
 
 
 int GameLoop(char *secretAnswer, char *playerAnswer, int dx, int dy){
   int nbTry;
   int *result;
+  
+  RandomAnswer(secretAnswer);
+
   
   for(nbTry = 0; nbTry<6; nbTry++){
     InputLetters(playerAnswer, &dx, &dy);
@@ -230,14 +469,46 @@ int GameLoop(char *secretAnswer, char *playerAnswer, int dx, int dy){
 }
 
 
-/*Function 
-    DisplayBegin();
-    DisplayEnd(1, secretAnswer);
-    RandomAnswer(secretAnswer);
-    InputLetters(playerAnswer, &dx, &dy);
-    ScrollText(text);
-    
-*/
+int GameLoop_3(char *secretAnswer, char *playerAnswer, int dx, int dy){
+  int nbTry;
+  int *result;
+  
+  RandomAnswer_3(secretAnswer);
+
+  
+  for(nbTry = 0; nbTry<6; nbTry++){
+    InputLetters_3(playerAnswer, &dx, &dy);
+    result = GetResults(secretAnswer, playerAnswer);
+    Printer(result, &dx,&dy, nbTry);
+    if(result[0] == 4)
+      return 0;
+  }
+  return 1;
+}
+
+
+int GameLoop_4(char *secretAnswer, char *playerAnswer, int dx, int dy){
+  int nbTry;
+  int *result;
+  
+  RandomAnswer_4(secretAnswer);
+
+  
+  for(nbTry = 0; nbTry<6; nbTry++){
+    InputLetters_4(playerAnswer, &dx, &dy);
+    result = GetResults(secretAnswer, playerAnswer);
+    Printer(result, &dx,&dy, nbTry);
+    if(result[0] == 4)
+      return 0;
+  }
+  return 1;
+}
+
+
+
+
+//################################################## Main ##################################################
+
 
 void loop() {
   lcd.clear();
@@ -246,23 +517,46 @@ void loop() {
   char playerAnswer[4];
   int dx = 0;
   int dy = 0;
+  int gameStatus = 0;
+  int level = 4;
   
   DisplayBegin();
-  
-  RandomAnswer(secretAnswer);
-  //lcd.write(secretAnswer);
-  
+    
   delay(500);
   lcd.clear();
   
-
-  int gameStatus = GameLoop(secretAnswer,playerAnswer, dx, dy);
+  level = MenuDisplay();
+  lcd.clear();
+  delay(300);
   
+
+  switch(level){
+  case 0:
+    gameStatus = GameLoop_0(secretAnswer, playerAnswer, dx, dy);
+    break;
+  
+  
+  case 1:
+     gameStatus = GameLoop_1(secretAnswer, playerAnswer, dx, dy);
+     break;
+     
+  case 2:
+     gameStatus = GameLoop(secretAnswer, playerAnswer, dx, dy);
+     break;
+
+   case 3:
+    gameStatus = GameLoop_3(secretAnswer,playerAnswer, dx, dy);
+    break;
+    
+  case 4:
+    gameStatus = GameLoop_4(secretAnswer,playerAnswer, dx, dy);
+    break;
+  
+  }
   if(gameStatus == 0)
     DisplayEnd(1, secretAnswer);
   else
     DisplayEnd(0, secretAnswer);
-
 
     
   delay(1000);
