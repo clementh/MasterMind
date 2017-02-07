@@ -2,7 +2,7 @@
  * ***********************MASTERMIND***********************
  * ********************************************************
  * **                                                    **
- * ###################### Version 2.0 #####################
+ * ###################### Version 2.1 #####################
  * **                                                    **
  * ** Authors:       C.HERAT && P-M.MAGNI                **
  * **                                                    **
@@ -15,28 +15,33 @@
 
 /**
  * Initialisation de la librairie avec les sorties de l'Arduino utilisées pour l'écran
- * Et declaration des entrées de l'Arduino pour les boutons
+ * Et declaration des entrées de l'Arduino pour les boutons ainsi que les leds
  */
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 const int button_1 = 8;
 const int button_2 = 9;
+const int led_r = 6;
+const int led_v = 7;
 
 
 /**
  * Initialisation de l'Arduino :
  * indiquer a la librairie les "dimensions" de l'écran
  * indiquer le mode de fonctionnement des pins pour les boutons
+ * Indiquer le mode de fonctionnement des pins pour les leds   
  */
 void setup() {
   pinMode(button_1, INPUT);
   pinMode(button_2, INPUT);
+  pinMode(led_r, OUTPUT);
+  pinMode(led_v, OUTPUT);
 
   srand(analogRead(0));
   
   lcd.begin(16, 2);
   lcd.clear();
+  
   DisplayBegin();
-
 }
 
 
@@ -64,6 +69,7 @@ void ResetAnswer(char *Answer){
 }
 
 
+
 /**
  * Pour faire les différents affichages avec un texte qui défile du programme,
  * nous avons créé cette fonction qui prend un texte en entrée et l'affiche
@@ -80,11 +86,12 @@ void ScrollText(char *text){
   lcd.autoscroll();
   for (int i = 0; i < len; i ++) {
     lcd.print(text[i]);
-    delay(350);
+    delay(200);
   }
   lcd.noAutoscroll();
   lcd.clear();  
 }
+
 
 
 /**
@@ -107,6 +114,44 @@ void BlinkLcd(char *text){
 
 
 /**
+ * Permet de faire clignoter les leds au lancement du jeu
+ * 
+ * @param flash_num   [int] indique le nombre de clignotement
+ * @param flash_speed [int] indique la vitesse de clignotement
+ */
+void BlinkLed(int flash_num, int flash_speed){
+  for(int i = 0; i<flash_num; i++){
+    digitalWrite(led_r, HIGH); 
+    digitalWrite(led_v, HIGH);
+    delay(flash_speed);
+    digitalWrite(led_r, LOW); 
+    digitalWrite(led_v, LOW); 
+    delay(flash_speed);
+  }
+}
+
+
+/**
+ * Permet de faire clignoter de façon particulière les leds lors des défaites ou
+ * des victoires
+ * 
+ * @param led         [int] définit la led a faire clignoter 
+ * @param flash_speed [int] définit la vitesse de clignotement
+ * @param flash_num   [int] définit le nombre de clignotement
+ */
+void LedAnswer(int led, int flash_speed, int flash_num){
+    for(int i=0; i<flash_num; i++){
+      digitalWrite(led,HIGH);
+      delay(flash_speed);
+      digitalWrite(led,LOW);
+      delay(flash_speed);
+      digitalWrite(led,HIGH);
+
+    }
+}
+
+
+/**
  * Affichage de présentation du jeu
  */
 void DisplayBegin(){
@@ -114,8 +159,8 @@ void DisplayBegin(){
   lcd.setCursor(3,0);
   lcd.print("MasterMind");
   lcd.setCursor(6, 1);
-  lcd.print("v2.0");
-  delay(2000);
+  lcd.print("v2.1");
+  BlinkLed(10, 100);
   lcd.clear();
 }
 
@@ -143,8 +188,9 @@ void DisplayEnd(int win, char *secretAnswer){
   lcd.setCursor(0,1);
   lcd.print("Answer was: ");
   lcd.write(secretAnswer);
-  delay(4000);
+  //delay(4000);
 }
+
 
 /**
  * affichage du menu de choix de niveau
@@ -174,7 +220,7 @@ int MenuDisplay(void){
     if(GetButtons()==2){
       return input;
     }
-    delay(200);
+    delay(300);
   }
 }
 
@@ -434,7 +480,7 @@ void InputLetters(char *playerAnswer, int *dx, int *dy, int interval, int twins)
         letter ++;
         *dx +=1;
       }
-    delay(200);
+    delay(300);
     }
   }
   else{
@@ -491,7 +537,6 @@ int GameLoop(char *secretAnswer, char *playerAnswer, int dx, int dy, int interva
 }
 
 
-
 /**
  * Boucle principale du programme
  *
@@ -515,6 +560,9 @@ int GameLoop(char *secretAnswer, char *playerAnswer, int dx, int dy, int interva
  *   - 42       : niveau solution 404 "Fuyez Pauvres Fous!"
  *       - Plusieurs même lettres possible
  *        Les lettres possible sont tout l'alphabet 
+ *
+ *
+ *  Et nous avons également des Leds qui s'allument en fonction des évenement du jeu. ;)
  *
  * Enjoy the game !
  */
@@ -557,11 +605,20 @@ void loop() {
     break;
   
   }
-  if(gameStatus == 0)
+  if(gameStatus == 0){
     DisplayEnd(1, secretAnswer);
-  else
+    LedAnswer(led_v,100,10);
+    delay(1000);
+  }
+  else{
     DisplayEnd(0, secretAnswer);
+    LedAnswer(led_r,100,5);
+    delay(1000);
 
-    
+  }
   delay(1000);
+  
+  digitalWrite(led_v,LOW);
+  digitalWrite(led_r,LOW);
+
 }
